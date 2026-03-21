@@ -1,0 +1,13 @@
+{{ define "main" }}
+    <div class="container  ">
+      <div class="about-section">
+        <div class="row justify-content-center">
+          <div class="col-sm-12 col-md-10 col-lg-8">
+            {{ with .Content }}
+              {{ . }}
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    </div>
+{{ end }}

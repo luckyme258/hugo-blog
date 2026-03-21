@@ -1,0 +1,37 @@
+<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6  mb-4">
+    <div class="card h-100 single-post-card shadow-effect bg-faded-light border rounded-4">
+        <a href="{{ .Permalink }}" aria-label="Link to {{ .Title }}">
+            <div class="card-body">
+
+                <h3 class="fw-medium post-title">{{ .Title }}</h3>
+                {{ if .Params.subtitle }}
+                <h3 class="post-subtitle">
+                    {{ .Params.subtitle }}
+                </h3>
+                {{ end }}
+
+                <p class="post-meta">
+                    {{ partial "post_meta_notes.html" . }}
+                </p>
+                {{ print }}
+
+                {{ if ( eq .Type "ml-space" "ml" "ml-musings") }}
+                    <div class="ml-post text-secondary">
+                {{ else }}
+                    <div class="post-entry text-secondary">
+                {{ end }}
+
+                    {{ if .Description }}
+                    {{ .Description | plainify }}
+                    {{ else }}
+                    {{ .Summary | plainify }}
+                    {{ end }}
+                </div>
+                <div class="read-more-section">
+                    <h6><a href="{{ .Permalink }}" class="small text-muted " alt="Link to {{ .Title }}">Read more <i class="bi bi-arrow-right"></i></a> </h6>
+                </div>
+            </div>
+        </a>
+        </a>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+
+{{ define "main" }}
+
+{{ $layout := site.Params.homepageLayout | default "portfolio" }}
+
+{{ if eq $layout "profile" }}
+  {{ partial "homeLayout/profile.html" . }}
+{{ else }}
+  {{ partial "homeLayout/blog.html" . }}
+{{ end }}
+
+{{ end }}
