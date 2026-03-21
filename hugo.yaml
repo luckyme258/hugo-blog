@@ -1,0 +1,45 @@
+baseURL: "http://localhost:1313"
+title: "笔随心走"
+languageCode: "zh-cn"
+theme: "lightbi"
+
+# 基本设置
+params:
+  author:
+    name: "JackLyu"
+  description: "微型博客"
+  
+  # 社交链接
+  social:
+    - name: "github"
+      url: "https://github.com/luckyme28"
+    - name: "wordpress"
+      url: "https://fan4love.wordpress.com"
+
+# 导航菜单
+menu:
+  main:
+    - identifier: "home"
+      name: "首页"
+      url: "/"
+      weight: 10
+    - identifier: "posts"
+      name: "文章"
+      url: "/posts/"
+      weight: 20
+    - identifier: "archives"
+      name: "归档"
+      url: "/archives/"
+      weight: 25
+    - identifier: "categories"
+      name: "分类"
+      url: "/categories/"
+      weight: 30
+    - identifier: "tags"
+      name: "标签"
+      url: "/tags/"
+      weight: 35
+    - identifier: "search"
+      name: "搜索"
+      url: "/search/"
+      weight: 40
