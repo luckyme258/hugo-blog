@@ -132,13 +132,23 @@
         transform: translateY(-2px);
     }
 
-    /* 标签云 */
+    /* ========== 标签云 - 多列布局 ========== */
+
+    /* 标签云容器 */
+    .tags-cloud-wrapper {
+        width: 100%;
+        position: relative;
+    }
+
+    /* 标签云 - 基础样式（PC端换行） */
     .tags-cloud {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
+        align-items: center;
     }
 
+    /* 标签样式 */
     .tag {
         display: inline-block;
         padding: 5px 12px;
@@ -150,6 +160,7 @@
         font-size: 0.8rem;
         transition: all 0.2s ease;
         cursor: pointer;
+        white-space: nowrap;
     }
 
     .tag:hover {
@@ -193,40 +204,178 @@
         align-self: start;
     }
 
-    /* 响应式 */
-    @media (max-width: 1024px) {
-        .three-columns {
-            grid-template-columns: 260px 1fr;
-        }
-        .right-sidebar {
-            display: none;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .three-columns {
-            grid-template-columns: 1fr;
-            padding: 20px 16px;
-        }
-        .left-sidebar {
-            position: static;
-        }
+    /* ========== 平板端优化 ========== */
+    @media (min-width: 641px) and (max-width: 1024px) {
         .widget {
             padding: 20px;
         }
+        
         .avatar {
             width: 80px;
             height: 80px;
         }
+        
         .name {
             font-size: 1.1rem;
         }
+        
         .bio {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+        }
+        
+        .search-input {
+            padding: 10px 14px;
+            font-size: 0.85rem;
+        }
+        
+        .widget-title {
+            font-size: 0.95rem;
+        }
+        
+        /* 平板端：3列布局 */
+        .tags-cloud {
+            display: block;
+            column-count: 3;
+            column-gap: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        
+        .tag {
+            display: inline-block;
+            width: auto;
+            margin-bottom: 8px;
+            break-inside: avoid;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+        }
+        
+        /* 自定义滚动条 */
+        .tags-cloud::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .tags-cloud::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+        
+        .tags-cloud::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 4px;
+        }
+        
+        .tags-cloud::-webkit-scrollbar-thumb:hover {
+            background: #5e72e4;
         }
     }
 
-    /* 动画效果 */
+    /* ========== 手机端优化 ========== */
+    @media (max-width: 640px) {
+        .widget {
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .avatar {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+        
+        .name {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+        
+        .bio {
+            font-size: 0.7rem;
+            margin-bottom: 10px;
+        }
+        
+        .social-link {
+            padding: 3px 8px;
+            font-size: 0.7rem;
+        }
+        
+        .widget-title {
+            font-size: 0.9rem;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+        }
+        
+        .search-input {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+        }
+        
+        /* 手机端：2列布局 */
+        .tags-cloud {
+            display: block;
+            column-count: 2;
+            column-gap: 10px;
+            max-height: 160px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        
+        .tag {
+            display: inline-block;
+            width: auto;
+            margin-bottom: 8px;
+            break-inside: avoid;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+        }
+        
+        .tag-count {
+            font-size: 0.6rem;
+        }
+        
+        /* 自定义滚动条 */
+        .tags-cloud::-webkit-scrollbar {
+            width: 3px;
+        }
+        
+        .tags-cloud::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+        
+        .tags-cloud::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+        
+        .tags-cloud::-webkit-scrollbar-thumb:hover {
+            background: #5e72e4;
+        }
+    }
+
+    /* ========== 小屏手机（≤480px） ========== */
+    @media (max-width: 480px) {
+        .tags-cloud {
+            max-height: 140px;
+            column-gap: 8px;
+        }
+        
+        .tag {
+            margin-bottom: 6px;
+            font-size: 0.65rem;
+            padding: 3px 8px;
+        }
+    }
+
+    /* 动画 */
     @keyframes fadeUp {
         from {
             opacity: 0;
@@ -238,7 +387,7 @@
         }
     }
 
-    .post-card, .widget {
+    .widget {
         animation: fadeUp 0.4s ease-out;
     }
 </style>

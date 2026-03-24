@@ -20,17 +20,19 @@
     <input type="text" class="search-input" id="searchInput" placeholder="输入标题或关键词...">
 </div>
 
-<!-- 标签卡片 -->
+<!-- 标签云卡片 -->
 <div class="widget">
     <div class="widget-title">🏷️ 标签云</div>
-    <div class="tags-cloud">
-        {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
-            {{ $count := len $taxonomy }}
-            {{ if ge $count 1 }}
-            <a href="/tags/{{ $name | urlize }}" class="tag" onclick="event.stopPropagation();">
-                {{ $name }} <span class="tag-count">({{ $count }})</span>
-            </a>
+    <div class="tags-cloud-wrapper">
+        <div class="tags-cloud">
+            {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+                {{ $count := len $taxonomy }}
+                {{ if ge $count 1 }}
+                <a href="/tags/{{ $name | urlize }}" class="tag" onclick="event.stopPropagation();">
+                    {{ $name }} <span class="tag-count">({{ $count }})</span>
+                </a>
+                {{ end }}
             {{ end }}
-        {{ end }}
+        </div>
     </div>
 </div>
