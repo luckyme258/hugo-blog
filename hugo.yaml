@@ -1,20 +1,39 @@
-baseURL: "https://fan4love.netlify.app"
+﻿baseURL: "https://fan4love.netlify.app"
 title: "笔随心走"
 languageCode: "zh-cn"
-theme: "lightbi"
+theme: "stack"
 
-# 基本设置
+# 分页
+paginate: 10
+
+# 主题参数
 params:
-  author:
-    name: "JackLyu"
+  author: "JackLyu"
   description: "微型博客"
-  
+
+  # 深色模式切换
+  theme:
+    toggle: true
+    default: "auto"
+
+  # 侧边栏
+  sidebar:
+    enabled: true
+    subtitle: "记录技术，分享生活"
+    avatar: "/images/avatar.jpg"
+
   # 社交链接
   social:
-    - name: "github"
-      url: "https://github.com/luckyme28"
-    - name: "wordpress"
+    - name: "GitHub"
+      url: "https://github.com/luckyme258"
+      icon: "fab fa-github"
+    - name: "WordPress"
       url: "https://fan4love.wordpress.com"
+      icon: "fab fa-wordpress"
+
+  # 搜索
+  search:
+    enabled: true
 
 # 导航菜单
 menu:
@@ -27,10 +46,6 @@ menu:
       name: "文章"
       url: "/posts/"
       weight: 20
-    - identifier: "archives"
-      name: "归档"
-      url: "/archives/"
-      weight: 25
     - identifier: "categories"
       name: "分类"
       url: "/categories/"
@@ -43,3 +58,12 @@ menu:
       name: "搜索"
       url: "/search/"
       weight: 40
+
+# 分类设置
+taxonomies:
+  category: "categories"
+  tag: "tags"
+
+# 忽略警告
+ignoreLogs:
+  - warning-goldmark-raw-html
