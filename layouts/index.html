@@ -1,0 +1,128 @@
+﻿{{ partial "sidebar-styles.html" . }}
+
+<div class="three-columns">
+    <aside class="left-sidebar">
+        {{ partial "sidebar.html" . }}
+    </aside>
+
+    <main>
+        {{ $posts := where .Site.RegularPages "Section" "posts" }}
+        
+        {{ if $posts }}
+            {{ range $posts }}
+            <article class="post-card" style="background: white; border-radius: 20px; padding: 28px; margin-bottom: 24px; transition: all 0.3s; border: 1px solid #eef2f6;">
+                <h2 class="post-title" style="font-size: 1.4rem; margin-bottom: 12px;">
+                    <a href="{{ .RelPermalink }}" style="text-decoration: none; color: #2d3748;">{{ .Title }}</a>
+                </h2>
+                <div class="post-meta" style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 14px; font-size: 0.8rem; color: #718096;">
+                    <span>📅 {{ .Date.Format "2006-01-02" }}</span>
+                    <span>⏱️ {{ .ReadingTime }} 分钟阅读</span>
+                    <span>📝 {{ .WordCount }} 字</span>
+                </div>
+                <div class="post-summary" style="color: #718096; line-height: 1.6; margin: 16px 0; font-size: 0.9rem;">
+                    {{ .Summary | plainify | truncate 150 }}
+                </div>
+                <a href="{{ .RelPermalink }}" class="read-more" style="display: inline-flex; align-items: center; gap: 6px; color: #5e72e4; text-decoration: none;">阅读全文 →</a>
+            </article>
+            {{ end }}
+        {{ else }}
+            <div class="empty-state" style="text-align: center; padding: 60px 40px; background: white; border-radius: 24px; border: 1px solid #eef2f6;">
+                <p style="font-size: 1.2rem;">✨ 暂无文章</p>
+                <p style="color: #718096; margin-top: 12px;">写点什么吧，让这里充满你的想法！</p>
+            </div>
+        {{ end }}
+    </main>
+
+    <aside class="right-sidebar"></aside>
+</div>
+
+<style>
+    .three-columns {
+        display: grid;
+        grid-template-columns: 280px 1fr 280px;
+        gap: 32px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 24px;
+    }
+
+    .post-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border-color: #5e72e4;
+    }
+
+    .post-title a:hover {
+        color: #5e72e4;
+    }
+
+    .read-more:hover {
+        gap: 10px;
+    }
+
+    @media (max-width: 1024px) {
+        .three-columns {
+            grid-template-columns: 260px 1fr;
+        }
+        .right-sidebar {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .three-columns {
+            grid-template-columns: 1fr;
+            padding: 20px 16px;
+        }
+        .left-sidebar {
+            position: static;
+        }
+        .post-card {
+            padding: 20px;
+        }
+        .post-title {
+            font-size: 1.2rem;
+        }
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .post-card, .widget {
+        animation: fadeUp 0.4s ease-out;
+    }
+</style>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const keyword = this.value.toLowerCase().trim();
+            const posts = document.querySelectorAll('.post-card');
+            
+            if (!keyword) {
+                posts.forEach(post => post.style.display = 'block');
+                return;
+            }
+            
+            posts.forEach(post => {
+                const title = post.querySelector('.post-title a')?.innerText.toLowerCase() || '';
+                const summary = post.querySelector('.post-summary')?.innerText.toLowerCase() || '';
+                
+                if (title.includes(keyword) || summary.includes(keyword)) {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = 'none';
+                }
+            });
+        });
+    }
+</script>

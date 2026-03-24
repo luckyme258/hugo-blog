@@ -173,7 +173,7 @@ class TagCategoryScanner:
 ---
 
 *此文件由 Hugo 文章管理器自动生成*
-*请勿手动编辑，修改会被自动覆盖*
+*阅读愉快！*
 """
         return md
     

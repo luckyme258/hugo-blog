@@ -1,0 +1,143 @@
+{{ define "main" }}
+{{ partial "sidebar-styles.html" . }}
+
+<div class="three-columns">
+    <!-- 左栏 -->
+    <aside class="left-sidebar">
+        {{ partial "sidebar.html" . }}
+    </aside>
+
+    <!-- 中栏：文章内容 -->
+    <article style="min-width: 0;">
+        <header>
+            <h1 style="font-size: 2rem; margin-bottom: 16px;">{{ .Title }}</h1>
+            <div style="color: #718096; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
+                <span>📅 {{ .Date.Format "2006-01-02" }}</span>
+                <span style="margin-left: 16px;">⏱️ {{ .ReadingTime }} 分钟阅读</span>
+                <span style="margin-left: 16px;">📝 {{ .WordCount }} 字</span>
+            </div>
+            {{ if .Params.categories }}
+            <div style="margin-bottom: 24px;">
+                {{ range .Params.categories }}
+                <a href="/categories/{{ . | urlize }}" style="background: #f0f0f0; padding: 4px 12px; border-radius: 20px; text-decoration: none; color: #5e72e4; margin-right: 8px;">{{ . }}</a>
+                {{ end }}
+            </div>
+            {{ end }}
+        </header>
+
+        <div style="line-height: 1.8; font-size: 1.1rem;">
+            {{ .Content }}
+        </div>
+
+        <style>
+            /* 文章内容样式 */
+            article p {
+                margin-bottom: 1.2em;
+            }
+            article h1, article h2, article h3, article h4, article h5, article h6 {
+                margin-top: 1.5em;
+                margin-bottom: 0.8em;
+                font-weight: 600;
+            }
+            article h1 { font-size: 1.8rem; }
+            article h2 { font-size: 1.5rem; }
+            article h3 { font-size: 1.3rem; }
+            article ul, article ol {
+                margin: 1em 0;
+                padding-left: 2em;
+            }
+            article li {
+                margin: 0.5em 0;
+            }
+            article blockquote {
+                border-left: 4px solid #5e72e4;
+                padding-left: 1em;
+                margin: 1em 0;
+                color: #718096;
+                font-style: italic;
+            }
+            article pre {
+                background: #f7fafc;
+                padding: 1em;
+                border-radius: 8px;
+                overflow-x: auto;
+                margin: 1em 0;
+            }
+            article code {
+                background: #f7fafc;
+                padding: 0.2em 0.4em;
+                border-radius: 4px;
+                font-family: monospace;
+                font-size: 0.9em;
+            }
+            article pre code {
+                background: none;
+                padding: 0;
+            }
+            article img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 8px;
+                margin: 1em 0;
+            }
+        </style>
+
+        <footer style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+            <a href="/" style="color: #5e72e4; text-decoration: none;">← 返回首页</a>
+            {{ if .Params.tags }}
+            <div style="margin-top: 16px;">
+                <strong>标签：</strong>
+                {{ range .Params.tags }}
+                <a href="/tags/{{ . | urlize }}" style="color: #5e72e4; text-decoration: none; margin-left: 8px;">#{{ . }}</a>
+                {{ end }}
+            </div>
+            {{ end }}
+        </footer>
+    </article>
+
+    <!-- 右栏：留白 -->
+    <aside class="right-sidebar"></aside>
+</div>
+
+<style>
+    .three-columns {
+        display: grid;
+        grid-template-columns: 280px 1fr 280px;
+        gap: 32px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 24px;
+    }
+
+    @media (max-width: 1024px) {
+        .three-columns {
+            grid-template-columns: 260px 1fr;
+        }
+        .right-sidebar {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .three-columns {
+            grid-template-columns: 1fr;
+            padding: 20px 16px;
+        }
+        .left-sidebar {
+            position: static;
+        }
+    }
+</style>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const keyword = this.value.toLowerCase().trim();
+            if (keyword) {
+                window.location.href = '/?s=' + encodeURIComponent(keyword);
+            }
+        });
+    }
+</script>
+{{ end }}

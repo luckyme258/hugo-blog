@@ -1,0 +1,227 @@
+{{ $allPosts := where .Site.RegularPages "Section" "posts" }}
+{{ $postsCount := len $allPosts }}
+
+{{ $candidatePool := slice }}
+
+{{ if ge $postsCount 1 }}
+    {{/* 统计每个Tag的文章数量 */}}
+    {{ $tagCount := dict }}
+    {{ range $allPosts }}
+        {{ range .Params.tags }}
+            {{ $tag := . }}
+            {{ $count := index $tagCount $tag | default 0 }}
+            {{ $tagCount = merge $tagCount (dict $tag (add $count 1)) }}
+        {{ end }}
+    {{ end }}
+    
+    {{/* 转换为可排序的切片 */}}
+    {{ $tagList := slice }}
+    {{ range $tag, $count := $tagCount }}
+        {{ $tagList = $tagList | append (dict "name" $tag "count" $count) }}
+    {{ end }}
+    
+    {{/* 按数量排序（热门） */}}
+    {{ $hotTags := sort $tagList "count" "desc" | first 15 }}
+    
+    {{/* 按数量排序（冷门） */}}
+    {{ $coldTags := sort $tagList "count" "asc" | first 15 }}
+    
+    {{/* 构建推荐池 */}}
+    {{ $recommendPool := slice }}
+    
+    {{/* 从热门Tag取文章 */}}
+    {{ range $hotTags }}
+        {{ $tagName := .name }}
+        {{ $tagPosts := where $allPosts "Params.tags" "intersect" (slice $tagName) }}
+        {{ $tagPosts = first 30 $tagPosts }}
+        {{ $recommendPool = $recommendPool | append $tagPosts }}
+    {{ end }}
+    
+    {{/* 从冷门Tag取文章 */}}
+    {{ range $coldTags }}
+        {{ $tagName := .name }}
+        {{ $tagPosts := where $allPosts "Params.tags" "intersect" (slice $tagName) }}
+        {{ $tagPosts = first 30 $tagPosts }}
+        {{ $recommendPool = $recommendPool | append $tagPosts }}
+    {{ end }}
+    
+    {{/* 加入最新20篇文章 */}}
+    {{ $latestPosts := first 20 $allPosts }}
+    {{ $recommendPool = $recommendPool | append $latestPosts }}
+    
+    {{/* 去重 */}}
+    {{ $uniqueMap := dict }}
+    {{ $candidatePool = slice }}
+    {{ range $recommendPool }}
+        {{ $url := .RelPermalink }}
+        {{ if not (index $uniqueMap $url) }}
+            {{ $uniqueMap = merge $uniqueMap (dict $url true) }}
+            {{ $candidatePool = $candidatePool | append . }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+<div class="recommend-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 class="recommend-title" style="margin-bottom: 0;">📖 推荐阅读</h3>
+        <div style="display: flex; gap: 8px;">
+            <button id="resetHistory" style="background: none; border: none; cursor: pointer; color: #a0aec0; font-size: 0.7rem; padding: 4px 8px; border-radius: 20px;" title="清除阅读记录">
+                🗑️ 重置
+            </button>
+            <button id="refreshRecommend" style="background: none; border: none; cursor: pointer; color: #5e72e4; font-size: 0.75rem; padding: 4px 8px; border-radius: 20px; transition: all 0.2s;">
+                🔄 换一批
+            </button>
+        </div>
+    </div>
+    <div class="recommend-list" id="recommendList">
+        <div class="recommend-empty">加载中...</div>
+    </div>
+</div>
+
+<script>
+    // 候选文章数据（构建时生成）
+    const candidatePosts = [
+        {{ range $candidatePool }}
+        {
+            id: "{{ .RelPermalink }}",
+            url: "{{ .RelPermalink }}",
+            title: {{ .Title | jsonify }},
+            date: "{{ .Date.Format "01-02" }}",
+            tags: {{ .Params.tags | jsonify }}
+        },
+        {{ end }}
+    ];
+
+    // 存储键名
+    const STORAGE_KEYS = {
+        READ_HISTORY: 'blog_read_history',      // 已读文章
+        CLICK_COUNTS: 'blog_click_counts'       // 点击次数
+    };
+
+    // 获取已读文章列表
+    function getReadHistory() {
+        const history = localStorage.getItem(STORAGE_KEYS.READ_HISTORY);
+        return history ? JSON.parse(history) : [];
+    }
+
+    // 获取点击统计
+    function getClickCounts() {
+        const counts = localStorage.getItem(STORAGE_KEYS.CLICK_COUNTS);
+        return counts ? JSON.parse(counts) : {};
+    }
+
+    // 记录文章点击
+    function recordClick(postId) {
+        // 记录已读
+        let history = getReadHistory();
+        if (!history.includes(postId)) {
+            history.push(postId);
+            localStorage.setItem(STORAGE_KEYS.READ_HISTORY, JSON.stringify(history));
+        }
+        
+        // 记录点击次数
+        let counts = getClickCounts();
+        counts[postId] = (counts[postId] || 0) + 1;
+        localStorage.setItem(STORAGE_KEYS.CLICK_COUNTS, JSON.stringify(counts));
+    }
+
+    // 清除所有记录
+    function resetHistory() {
+        if (confirm('清除阅读记录后，推荐将重新包含所有文章。确定吗？')) {
+            localStorage.removeItem(STORAGE_KEYS.READ_HISTORY);
+            localStorage.removeItem(STORAGE_KEYS.CLICK_COUNTS);
+            renderRecommend();
+        }
+    }
+
+    // 智能推荐算法
+    function getSmartRecommendations(arr, count) {
+        const readHistory = getReadHistory();
+        const clickCounts = getClickCounts();
+        
+        // 为每篇文章计算推荐分数
+        const scored = arr.map(post => {
+            let score = 0;
+            
+            // 1. 未读文章加分（+100）
+            if (!readHistory.includes(post.id)) {
+                score += 100;
+            } else {
+                // 已读文章减分（-50）
+                score -= 50;
+            }
+            
+            // 2. 点击次数加分（+1 per click）
+            const clicks = clickCounts[post.id] || 0;
+            score += clicks;
+            
+            // 3. 随机波动（-5 到 +5），增加多样性
+            score += (Math.random() - 0.5) * 10;
+            
+            return { ...post, score };
+        });
+        
+        // 按分数排序，取前 count 篇
+        scored.sort((a, b) => b.score - a.score);
+        return scored.slice(0, count);
+    }
+
+    // 渲染推荐列表
+    function renderRecommend() {
+        const list = document.getElementById('recommendList');
+        if (!list) return;
+        
+        if (!candidatePosts || candidatePosts.length === 0) {
+            list.innerHTML = '<div class="recommend-empty">暂无推荐文章</div>';
+            return;
+        }
+        
+        // 使用智能推荐
+        const posts = getSmartRecommendations(candidatePosts, 5);
+        
+        // 记录显示的文章（用于后续点击统计）
+        list.innerHTML = posts.map(p => `
+            <a href="${p.url}" class="recommend-item" data-post-id="${p.id}">
+                <span class="recommend-icon">📌</span>
+                <span class="recommend-title-text">${escapeHtml(p.title)}</span>
+                <span class="recommend-date">${p.date}</span>
+            </a>
+        `).join('');
+        
+        // 绑定点击事件
+        document.querySelectorAll('.recommend-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const postId = this.getAttribute('data-post-id');
+                if (postId) {
+                    recordClick(postId);
+                }
+            });
+        });
+    }
+
+    // 防止XSS
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // 页面加载时渲染
+    document.addEventListener('DOMContentLoaded', () => {
+        renderRecommend();
+    });
+    
+    // 换一批按钮
+    const refreshBtn = document.getElementById('refreshRecommend');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            renderRecommend();
+        });
+    }
+    
+    // 重置历史按钮
+    const resetBtn = document.getElementById('resetHistory');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetHistory);
+    }
+</script>

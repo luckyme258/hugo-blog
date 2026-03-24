@@ -1,0 +1,440 @@
+{{ define "main" }}
+{{ partial "sidebar-styles.html" . }}
+
+<div class="three-columns">
+    <!-- 左栏 -->
+    <aside class="left-sidebar">
+        {{ partial "sidebar.html" . }}
+    </aside>
+
+    <!-- 中栏 -->
+    <div class="glass-container">
+        <!-- 主内容卡片 -->
+        <div class="glass-card">
+            <h1 class="glass-title">{{ .Title }}</h1>
+            
+            <div class="glass-list">
+                {{ $paginator := .Paginate .Pages 10 }}
+                {{ range $paginator.Pages }}
+                <a href="{{ .RelPermalink }}" class="glass-item-link">
+                    <div class="glass-item">
+                        <h2 class="glass-item-title">{{ .Title }}</h2>
+                        <div class="glass-item-meta">
+                            <span>📅 {{ .Date.Format "2006-01-02" }}</span>
+                            <span>⏱️ {{ .ReadingTime }} 分钟阅读</span>
+                            <span>📝 {{ .WordCount }} 字</span>
+                        </div>
+                        <div class="glass-item-summary">
+                            {{ $summary := .Summary | plainify }}
+                            {{ $chineseCount := len (findRE "[\\p{Han}]" $summary) }}
+                            {{ $englishCount := len (findRE "[a-zA-Z]" $summary) }}
+                            {{ if gt $chineseCount 18 }}
+                                {{ $summary = printf "%s..." (substr $summary 0 54) }}
+                            {{ else if gt $englishCount 28 }}
+                                {{ $summary = printf "%s..." (substr $summary 0 84) }}
+                            {{ else }}
+                                {{ $summary = $summary }}
+                            {{ end }}
+                            {{ $summary | safeHTML }}
+                        </div>
+                        <div class="glass-read-more">阅读全文 →</div>
+                    </div>
+                </a>
+                {{ end }}
+            </div>
+
+            <!-- 分页 - 简化版 -->
+            {{ if gt $paginator.TotalPages 1 }}
+            <div class="glass-pagination">
+                <div class="pagination-nav">
+                    {{ if $paginator.HasPrev }}
+                    <a href="{{ $paginator.Prev.URL }}" class="page-btn">← 上一页</a>
+                    {{ end }}
+                    
+                    <span class="page-info">
+                        第 {{ $paginator.PageNumber }} 页 / 共 {{ $paginator.TotalPages }} 页
+                    </span>
+                    
+                    {{ if $paginator.HasNext }}
+                    <a href="{{ $paginator.Next.URL }}" class="page-btn">下一页 →</a>
+                    {{ end }}
+                </div>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+
+    <!-- 右栏：推荐阅读 -->
+    <aside class="right-sidebar">
+        {{ partial "recommend.html" . }}
+    </aside>
+</div>
+
+<style>
+    .three-columns {
+        display: grid;
+        grid-template-columns: 280px 1fr 280px;
+        gap: 32px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 24px;
+    }
+
+    /* 毛玻璃容器 */
+    .glass-container {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    /* 主毛玻璃卡片 */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border-radius: 28px;
+        padding: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        border-color: rgba(94, 114, 228, 0.3);
+    }
+
+    /* 推荐卡片样式 */
+    .recommend-card {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(8px);
+        border-radius: 24px;
+        padding: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        position: sticky;
+        top: 20px;
+    }
+
+    .recommend-card:hover {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+        border-color: rgba(94, 114, 228, 0.25);
+    }
+
+    .recommend-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #5e72e4;
+        display: inline-block;
+        color: #2d3748;
+    }
+
+    .recommend-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .recommend-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        border: 1px solid rgba(226, 232, 240, 0.3);
+    }
+
+    .recommend-item:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateX(4px);
+        border-color: #5e72e4;
+    }
+
+    .recommend-icon {
+        font-size: 1rem;
+        color: #5e72e4;
+    }
+
+    .recommend-title-text {
+        flex: 1;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #2d3748;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .recommend-date {
+        font-size: 0.7rem;
+        color: #a0aec0;
+    }
+
+    .recommend-empty {
+        text-align: center;
+        padding: 20px;
+        color: #a0aec0;
+        font-size: 0.85rem;
+    }
+
+    /* 标题样式 */
+    .glass-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 32px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #5e72e4;
+        display: inline-block;
+        background: linear-gradient(135deg, #2d3748 0%, #5e72e4 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* 列表容器 */
+    .glass-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* 卡片链接 */
+    .glass-item-link {
+        text-decoration: none;
+        display: block;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    /* 列表项卡片 */
+    .glass-item {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(4px);
+        border-radius: 20px;
+        padding: 24px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        cursor: pointer;
+    }
+
+    .glass-item-link:hover .glass-item {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateX(6px) translateY(-2px);
+        border-color: #5e72e4;
+        box-shadow: 0 12px 28px rgba(94, 114, 228, 0.15);
+    }
+
+    .glass-item-link:active .glass-item {
+        transform: translateX(3px) translateY(-1px);
+        transition: transform 0.05s;
+    }
+
+    /* 文章标题 */
+    .glass-item-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin: 0 0 12px 0;
+        transition: color 0.2s ease;
+    }
+
+    .glass-item-link:hover .glass-item-title {
+        color: #5e72e4;
+    }
+
+    /* 元数据 */
+    .glass-item-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin: 12px 0;
+        font-size: 0.75rem;
+        color: #718096;
+    }
+
+    .glass-item-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* 摘要 */
+    .glass-item-summary {
+        color: #718096;
+        line-height: 1.6;
+        margin: 12px 0;
+        font-size: 0.88rem;
+    }
+
+    /* 阅读更多 */
+    .glass-read-more {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #5e72e4;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-top: 8px;
+        transition: gap 0.2s ease;
+    }
+
+    .glass-item-link:hover .glass-read-more {
+        gap: 10px;
+    }
+
+    /* 分页 */
+    .glass-pagination {
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(226, 232, 240, 0.5);
+        text-align: center;
+    }
+
+    .pagination-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .page-btn {
+        display: inline-block;
+        padding: 8px 20px;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 40px;
+        text-decoration: none;
+        color: #5e72e4;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(94, 114, 228, 0.3);
+    }
+
+    .page-btn:hover {
+        background: #5e72e4;
+        color: white;
+        transform: translateY(-2px);
+        border-color: #5e72e4;
+    }
+
+    .page-info {
+        color: #718096;
+        font-size: 0.85rem;
+    }
+
+    /* 右栏 */
+    .right-sidebar {
+        position: sticky;
+        top: 20px;
+        align-self: start;
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+        .three-columns {
+            grid-template-columns: 260px 1fr;
+        }
+        .right-sidebar {
+            display: block;
+            position: static;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .three-columns {
+            grid-template-columns: 1fr;
+            padding: 20px 16px;
+        }
+        .left-sidebar {
+            position: static;
+        }
+        .glass-card {
+            padding: 20px;
+        }
+        .glass-title {
+            font-size: 1.5rem;
+        }
+        .glass-item {
+            padding: 18px;
+        }
+        .glass-item-title {
+            font-size: 1rem;
+        }
+        .glass-item-meta {
+            gap: 12px;
+            font-size: 0.65rem;
+        }
+        .recommend-card {
+            position: static;
+        }
+    }
+
+    /* 动画 */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .glass-item-link {
+        animation: fadeInUp 0.4s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .glass-item-link:nth-child(1) { animation-delay: 0.03s; }
+    .glass-item-link:nth-child(2) { animation-delay: 0.06s; }
+    .glass-item-link:nth-child(3) { animation-delay: 0.09s; }
+    .glass-item-link:nth-child(4) { animation-delay: 0.12s; }
+    .glass-item-link:nth-child(5) { animation-delay: 0.15s; }
+    .glass-item-link:nth-child(6) { animation-delay: 0.18s; }
+    .glass-item-link:nth-child(7) { animation-delay: 0.21s; }
+    .glass-item-link:nth-child(8) { animation-delay: 0.24s; }
+    .glass-item-link:nth-child(9) { animation-delay: 0.27s; }
+    .glass-item-link:nth-child(10) { animation-delay: 0.3s; }
+
+    .recommend-card {
+        animation: fadeInUp 0.5s ease-out 0.1s both;
+    }
+</style>
+
+<script>
+    // 阻止社交链接和标签链接冒泡
+    document.addEventListener('DOMContentLoaded', function() {
+        const socialLinks = document.querySelectorAll('.social-link');
+        socialLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+        
+        const tags = document.querySelectorAll('.tag');
+        tags.forEach(tag => {
+            tag.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+        
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+    });
+</script>
+{{ end }}

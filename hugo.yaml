@@ -1,35 +1,27 @@
 ﻿baseURL: "https://fan4love.netlify.app"
 title: "笔随心走"
 languageCode: "zh-cn"
-theme: "stack"
+
 
 # 分页
 paginate: 10
 
 # 主题参数
 params:
-  author: "JackLyu"
+  author: "Jack Lyu"
   description: "微型博客"
-
+  
+  # 关键：隐藏主题自带的侧边栏
+  sidebar:
+    enabled: false
+    
+  # 关键：禁用左侧面板
+  mainSections: []
+  
   # 深色模式切换
   theme:
     toggle: true
     default: "auto"
-
-  # 侧边栏
-  sidebar:
-    enabled: true
-    subtitle: "记录技术，分享生活"
-    avatar: "/images/avatar.jpg"
-
-  # 社交链接
-  social:
-    - name: "GitHub"
-      url: "https://github.com/luckyme258"
-      icon: "fab fa-github"
-    - name: "WordPress"
-      url: "https://fan4love.wordpress.com"
-      icon: "fab fa-wordpress"
 
   # 搜索
   search:
@@ -54,10 +46,6 @@ menu:
       name: "标签"
       url: "/tags/"
       weight: 35
-    - identifier: "search"
-      name: "搜索"
-      url: "/search/"
-      weight: 40
 
 # 分类设置
 taxonomies:

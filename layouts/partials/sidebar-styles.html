@@ -1,0 +1,244 @@
+<style>
+    /* 左栏样式 */
+    .left-sidebar {
+        position: sticky;
+        top: 20px;
+        align-self: start;
+    }
+
+    .widget {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 24px;
+        border: 1px solid #eef2f6;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 头像卡片 - 可点击区域的交互效果 */
+    .widget.avatar-section {
+        cursor: pointer;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* 悬停效果 - 上浮 + 阴影增强 */
+    .widget.avatar-section:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+        border-color: #5e72e4;
+    }
+
+    /* 点击波纹效果 */
+    .widget.avatar-section:active {
+        transform: translateY(-2px);
+        transition: transform 0.05s;
+    }
+
+    /* 悬停时头像轻微放大 */
+    .widget.avatar-section:hover .avatar {
+        transform: scale(1.02);
+        transition: transform 0.3s ease;
+    }
+
+    /* 悬停时名字变色 */
+    .widget.avatar-section:hover .name {
+        color: #5e72e4;
+        transition: color 0.2s ease;
+    }
+
+    /* 普通卡片悬停效果 */
+    .widget:not(.avatar-section):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .widget-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #5e72e4;
+        display: inline-block;
+    }
+
+    /* 头像区域 */
+    .avatar-section {
+        text-align: center;
+    }
+
+    .avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 16px;
+        border: 3px solid #5e72e4;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* 头像悬停光效 */
+    .widget.avatar-section:hover .avatar {
+        box-shadow: 0 0 0 4px rgba(94, 114, 228, 0.2);
+    }
+
+    .name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+        transition: color 0.2s ease;
+    }
+
+    .bio {
+        font-size: 0.85rem;
+        color: #718096;
+        margin-bottom: 16px;
+        transition: color 0.2s ease;
+    }
+
+    /* 悬停时简介颜色变深 */
+    .widget.avatar-section:hover .bio {
+        color: #4a5568;
+    }
+
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .social-link {
+        display: inline-block;
+        padding: 5px 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 30px;
+        text-decoration: none;
+        color: #718096;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .social-link:hover {
+        background: #5e72e4;
+        color: white;
+        border-color: #5e72e4;
+        transform: translateY(-2px);
+    }
+
+    /* 标签云 */
+    .tags-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .tag {
+        display: inline-block;
+        padding: 5px 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 30px;
+        text-decoration: none;
+        color: #2d3748;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .tag:hover {
+        background: #5e72e4;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .tag-count {
+        color: #a0aec0;
+        margin-left: 4px;
+        font-size: 0.7rem;
+        transition: color 0.2s ease;
+    }
+
+    .tag:hover .tag-count {
+        color: white;
+    }
+
+    /* 搜索框 */
+    .search-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 40px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: all 0.2s ease;
+        background: white;
+    }
+
+    .search-input:focus {
+        border-color: #5e72e4;
+        box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.1);
+        transform: scale(1.01);
+    }
+
+    .right-sidebar {
+        position: sticky;
+        top: 20px;
+        align-self: start;
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+        .three-columns {
+            grid-template-columns: 260px 1fr;
+        }
+        .right-sidebar {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .three-columns {
+            grid-template-columns: 1fr;
+            padding: 20px 16px;
+        }
+        .left-sidebar {
+            position: static;
+        }
+        .widget {
+            padding: 20px;
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+        }
+        .name {
+            font-size: 1.1rem;
+        }
+        .bio {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* 动画效果 */
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .post-card, .widget {
+        animation: fadeUp 0.4s ease-out;
+    }
+</style>
