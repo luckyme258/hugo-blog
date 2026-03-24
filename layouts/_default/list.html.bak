@@ -20,26 +20,9 @@
                     <div class="glass-item">
                         <h2 class="glass-item-title">{{ .Title }}</h2>
                         <div class="glass-item-meta">
-                            {{ $chineseCount := len (findRE "[\\p{Han}]" .Plain) }}
-                            {{ $englishCount := len (findRE "[a-zA-Z]" .Plain) }}
-                            {{ $totalCount := add $chineseCount $englishCount }}
-                            {{ $chineseTime := div $chineseCount 40 }}
-                            {{ $englishTime := div $englishCount 200 }}
-                            {{ $rawReadingTime := add $chineseTime $englishTime }}
-                            {{ $readingTime := $rawReadingTime }}
-                            {{ if lt $rawReadingTime 1 }}
-                                {{ $readingTime = 1 }}
-                            {{ else }}
-                                {{ if gt (mod $rawReadingTime 1) 0 }}
-                                    {{ $readingTime = add $rawReadingTime 1 | math.Floor }}
-                                {{ else }}
-                                    {{ $readingTime = $rawReadingTime }}
-                                {{ end }}
-                            {{ end }}
-                            
                             <span>📅 {{ .Date.Format "2006-01-02" }}</span>
-                            <span>⏱️ {{ $readingTime }} 分钟阅读</span>
-                            <span>📝 {{ $totalCount }} 字</span>
+                            <span>⏱️ {{ .ReadingTime }} 分钟阅读</span>
+                            <span>📝 {{ .WordCount }} 字</span>
                         </div>
                         <div class="glass-item-summary">
                             {{ $summary := .Summary | plainify }}

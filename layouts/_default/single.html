@@ -8,95 +8,63 @@
     </aside>
 
     <!-- 中栏：文章内容 -->
-    <article style="min-width: 0;">
-        <header>
-            <h1 style="font-size: 2rem; margin-bottom: 16px;">{{ .Title }}</h1>
-            <div style="color: #718096; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
+    <div class="glass-container">
+        <div class="glass-card">
+            <h1 class="glass-title">{{ .Title }}</h1>
+            
+            <div class="post-meta" style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(226, 232, 240, 0.5);">
+                {{ $chineseCount := len (findRE "[\\p{Han}]" .Plain) }}
+                {{ $englishCount := len (findRE "[a-zA-Z]" .Plain) }}
+                {{ $totalCount := add $chineseCount $englishCount }}
+                {{ $chineseTime := div $chineseCount 40 }}
+                {{ $englishTime := div $englishCount 200 }}
+                {{ $rawReadingTime := add $chineseTime $englishTime }}
+                {{ $readingTime := $rawReadingTime }}
+                {{ if lt $rawReadingTime 1 }}
+                    {{ $readingTime = 1 }}
+                {{ else }}
+                    {{ if gt (mod $rawReadingTime 1) 0 }}
+                        {{ $readingTime = add $rawReadingTime 1 | math.Floor }}
+                    {{ else }}
+                        {{ $readingTime = $rawReadingTime }}
+                    {{ end }}
+                {{ end }}
+                
                 <span>📅 {{ .Date.Format "2006-01-02" }}</span>
-                <span style="margin-left: 16px;">⏱️ {{ .ReadingTime }} 分钟阅读</span>
-                <span style="margin-left: 16px;">📝 {{ .WordCount }} 字</span>
+                <span style="margin-left: 16px;">⏱️ {{ $readingTime }} 分钟阅读</span>
+                <span style="margin-left: 16px;">📝 {{ $totalCount }} 字</span>
             </div>
+            
             {{ if .Params.categories }}
             <div style="margin-bottom: 24px;">
                 {{ range .Params.categories }}
-                <a href="/categories/{{ . | urlize }}" style="background: #f0f0f0; padding: 4px 12px; border-radius: 20px; text-decoration: none; color: #5e72e4; margin-right: 8px;">{{ . }}</a>
+                <a href="/categories/{{ . | urlize }}" class="post-category">{{ . }}</a>
                 {{ end }}
             </div>
             {{ end }}
-        </header>
 
-        <div style="line-height: 1.8; font-size: 1.1rem;">
-            {{ .Content }}
+            <div class="post-content">
+                {{ .Content }}
+            </div>
+
+            <footer style="margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(226, 232, 240, 0.5);">
+                <a href="/" style="color: #5e72e4; text-decoration: none;">← 返回首页</a>
+                {{ if .Params.tags }}
+                <div style="margin-top: 16px;">
+                    <strong>标签：</strong>
+                    {{ range .Params.tags }}
+                    <a href="/tags/{{ . | urlize }}" style="color: #5e72e4; text-decoration: none; margin-left: 8px;">#{{ . }}</a>
+                    {{ end }}
+                </div>
+                {{ end }}
+            </footer>
         </div>
+    </div>
 
-        <style>
-            /* 文章内容样式 */
-            article p {
-                margin-bottom: 1.2em;
-            }
-            article h1, article h2, article h3, article h4, article h5, article h6 {
-                margin-top: 1.5em;
-                margin-bottom: 0.8em;
-                font-weight: 600;
-            }
-            article h1 { font-size: 1.8rem; }
-            article h2 { font-size: 1.5rem; }
-            article h3 { font-size: 1.3rem; }
-            article ul, article ol {
-                margin: 1em 0;
-                padding-left: 2em;
-            }
-            article li {
-                margin: 0.5em 0;
-            }
-            article blockquote {
-                border-left: 4px solid #5e72e4;
-                padding-left: 1em;
-                margin: 1em 0;
-                color: #718096;
-                font-style: italic;
-            }
-            article pre {
-                background: #f7fafc;
-                padding: 1em;
-                border-radius: 8px;
-                overflow-x: auto;
-                margin: 1em 0;
-            }
-            article code {
-                background: #f7fafc;
-                padding: 0.2em 0.4em;
-                border-radius: 4px;
-                font-family: monospace;
-                font-size: 0.9em;
-            }
-            article pre code {
-                background: none;
-                padding: 0;
-            }
-            article img {
-                max-width: 100%;
-                height: auto;
-                border-radius: 8px;
-                margin: 1em 0;
-            }
-        </style>
-
-        <footer style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
-            <a href="/" style="color: #5e72e4; text-decoration: none;">← 返回首页</a>
-            {{ if .Params.tags }}
-            <div style="margin-top: 16px;">
-                <strong>标签：</strong>
-                {{ range .Params.tags }}
-                <a href="/tags/{{ . | urlize }}" style="color: #5e72e4; text-decoration: none; margin-left: 8px;">#{{ . }}</a>
-                {{ end }}
-            </div>
-            {{ end }}
-        </footer>
-    </article>
-
-    <!-- 右栏：留白 -->
-    <aside class="right-sidebar"></aside>
+    <!-- 右栏：推荐阅读 -->
+    <aside class="right-sidebar">
+        {{ partial "recommend.html" . }}
+    </aside>
 </div>
 
 <style>
@@ -109,12 +77,202 @@
         padding: 32px 24px;
     }
 
+    .glass-container {
+        min-width: 0;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border-radius: 28px;
+        padding: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        border-color: rgba(94, 114, 228, 0.3);
+    }
+
+    .glass-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+        background: linear-gradient(135deg, #2d3748 0%, #5e72e4 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .post-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 0.85rem;
+        color: #718096;
+    }
+
+    .post-category {
+        background: rgba(94, 114, 228, 0.1);
+        padding: 4px 12px;
+        border-radius: 20px;
+        text-decoration: none;
+        color: #5e72e4;
+        font-size: 0.8rem;
+        transition: all 0.2s;
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    .post-category:hover {
+        background: #5e72e4;
+        color: white;
+    }
+
+    .post-content {
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    .post-content p {
+        margin-bottom: 1.2em;
+    }
+
+    .post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6 {
+        margin-top: 1.5em;
+        margin-bottom: 0.8em;
+        font-weight: 600;
+    }
+
+    .post-content h1 { font-size: 1.8rem; }
+    .post-content h2 { font-size: 1.5rem; }
+    .post-content h3 { font-size: 1.3rem; }
+    .post-content ul, .post-content ol {
+        margin: 1em 0;
+        padding-left: 2em;
+    }
+    .post-content li {
+        margin: 0.5em 0;
+    }
+    .post-content blockquote {
+        border-left: 4px solid #5e72e4;
+        padding-left: 1em;
+        margin: 1em 0;
+        color: #718096;
+        font-style: italic;
+    }
+    .post-content pre {
+        background: rgba(0, 0, 0, 0.05);
+        padding: 1em;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 1em 0;
+    }
+    .post-content code {
+        background: rgba(0, 0, 0, 0.05);
+        padding: 0.2em 0.4em;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.9em;
+    }
+    .post-content pre code {
+        background: none;
+        padding: 0;
+    }
+    .post-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 1em 0;
+    }
+
+    /* 右栏推荐卡片样式 */
+    .right-sidebar {
+        position: sticky;
+        top: 20px;
+        align-self: start;
+    }
+
+    .recommend-card {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(8px);
+        border-radius: 24px;
+        padding: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+    }
+
+    .recommend-card:hover {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+        border-color: rgba(94, 114, 228, 0.25);
+    }
+
+    .recommend-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #5e72e4;
+        display: inline-block;
+        color: #2d3748;
+    }
+
+    .recommend-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .recommend-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        border: 1px solid rgba(226, 232, 240, 0.3);
+    }
+
+    .recommend-item:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateX(4px);
+        border-color: #5e72e4;
+    }
+
+    .recommend-icon {
+        font-size: 1rem;
+        color: #5e72e4;
+    }
+
+    .recommend-title-text {
+        flex: 1;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #2d3748;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .recommend-date {
+        font-size: 0.7rem;
+        color: #a0aec0;
+    }
+
     @media (max-width: 1024px) {
         .three-columns {
             grid-template-columns: 260px 1fr;
         }
         .right-sidebar {
-            display: none;
+            display: block;
+            position: static;
         }
     }
 
@@ -126,6 +284,34 @@
         .left-sidebar {
             position: static;
         }
+        .glass-card {
+            padding: 20px;
+        }
+        .glass-title {
+            font-size: 1.5rem;
+        }
+        .recommend-card {
+            position: static;
+        }
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .glass-card {
+        animation: fadeUp 0.4s ease-out;
+    }
+
+    .recommend-card {
+        animation: fadeUp 0.5s ease-out 0.1s both;
     }
 </style>
 
