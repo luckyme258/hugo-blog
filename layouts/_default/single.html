@@ -12,7 +12,7 @@
         <div class="glass-card">
             <h1 class="glass-title">{{ .Title }}</h1>
             
-            <div class="post-meta" style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(226, 232, 240, 0.5);">
+            <div class="post-meta">
                 {{ $chineseCount := len (findRE "[\\p{Han}]" .Plain) }}
                 {{ $englishCount := len (findRE "[a-zA-Z]" .Plain) }}
                 {{ $totalCount := add $chineseCount $englishCount }}
@@ -31,12 +31,12 @@
                 {{ end }}
                 
                 <span>📅 {{ .Date.Format "2006-01-02" }}</span>
-                <span style="margin-left: 16px;">⏱️ {{ $readingTime }} 分钟阅读</span>
-                <span style="margin-left: 16px;">📝 {{ $totalCount }} 字</span>
+                <span>⏱️ {{ $readingTime }} 分钟阅读</span>
+                <span>📝 {{ $totalCount }} 字</span>
             </div>
             
             {{ if .Params.categories }}
-            <div style="margin-bottom: 24px;">
+            <div class="post-categories">
                 {{ range .Params.categories }}
                 <a href="/categories/{{ . | urlize }}" class="post-category">{{ . }}</a>
                 {{ end }}
@@ -47,13 +47,13 @@
                 {{ .Content }}
             </div>
 
-            <footer style="margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(226, 232, 240, 0.5);">
-                <a href="/" style="color: #5e72e4; text-decoration: none;">← 返回首页</a>
+            <footer class="post-footer">
+                <a href="/" class="back-home">← 返回首页</a>
                 {{ if .Params.tags }}
-                <div style="margin-top: 16px;">
+                <div class="post-tags">
                     <strong>标签：</strong>
                     {{ range .Params.tags }}
-                    <a href="/tags/{{ . | urlize }}" style="color: #5e72e4; text-decoration: none; margin-left: 8px;">#{{ . }}</a>
+                    <a href="/tags/{{ . | urlize }}" class="post-tag">#{{ . }}</a>
                     {{ end }}
                 </div>
                 {{ end }}
@@ -68,250 +68,518 @@
 </div>
 
 <style>
-    .three-columns {
-        display: grid;
-        grid-template-columns: 280px 1fr 280px;
-        gap: 32px;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 32px 24px;
+    /* ========== 全局设置 ========== */
+    html {
+        font-size: 16px;
     }
 
-    .glass-container {
-        min-width: 0;
-    }
-
-    .glass-card {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(12px);
-        border-radius: 28px;
-        padding: 32px;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-    }
-
-    .glass-card:hover {
-        background: rgba(255, 255, 255, 0.92);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-        border-color: rgba(94, 114, 228, 0.3);
-    }
-
-    .glass-title {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 24px;
-        background: linear-gradient(135deg, #2d3748 0%, #5e72e4 100%);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .post-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        font-size: 0.85rem;
-        color: #718096;
-    }
-
-    .post-category {
-        background: rgba(94, 114, 228, 0.1);
-        padding: 4px 12px;
-        border-radius: 20px;
-        text-decoration: none;
-        color: #5e72e4;
-        font-size: 0.8rem;
-        transition: all 0.2s;
-        display: inline-block;
-        margin-right: 8px;
-    }
-
-    .post-category:hover {
-        background: #5e72e4;
-        color: white;
-    }
-
-    .post-content {
-        line-height: 1.8;
-        font-size: 1.05rem;
-    }
-
-    .post-content p {
-        margin-bottom: 1.2em;
-    }
-
-    .post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6 {
-        margin-top: 1.5em;
-        margin-bottom: 0.8em;
-        font-weight: 600;
-    }
-
-    .post-content h1 { font-size: 1.8rem; }
-    .post-content h2 { font-size: 1.5rem; }
-    .post-content h3 { font-size: 1.3rem; }
-    .post-content ul, .post-content ol {
-        margin: 1em 0;
-        padding-left: 2em;
-    }
-    .post-content li {
-        margin: 0.5em 0;
-    }
-    .post-content blockquote {
-        border-left: 4px solid #5e72e4;
-        padding-left: 1em;
-        margin: 1em 0;
-        color: #718096;
-        font-style: italic;
-    }
-    .post-content pre {
-        background: rgba(0, 0, 0, 0.05);
-        padding: 1em;
-        border-radius: 8px;
-        overflow-x: auto;
-        margin: 1em 0;
-    }
-    .post-content code {
-        background: rgba(0, 0, 0, 0.05);
-        padding: 0.2em 0.4em;
-        border-radius: 4px;
-        font-family: monospace;
-        font-size: 0.9em;
-    }
-    .post-content pre code {
-        background: none;
-        padding: 0;
-    }
-    .post-content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        margin: 1em 0;
-    }
-
-    /* 右栏推荐卡片样式 */
-    .right-sidebar {
-        position: sticky;
-        top: 20px;
-        align-self: start;
-    }
-
-    .recommend-card {
-        background: rgba(255, 255, 255, 0.75);
-        backdrop-filter: blur(8px);
-        border-radius: 24px;
-        padding: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-        transition: all 0.3s ease;
-    }
-
-    .recommend-card:hover {
-        background: rgba(255, 255, 255, 0.85);
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
-        border-color: rgba(94, 114, 228, 0.25);
-    }
-
-    .recommend-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        margin-bottom: 20px;
-        padding-bottom: 12px;
-        border-bottom: 2px solid #5e72e4;
-        display: inline-block;
-        color: #2d3748;
-    }
-
-    .recommend-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .recommend-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 12px;
-        background: rgba(255, 255, 255, 0.5);
-        border-radius: 12px;
-        text-decoration: none;
-        transition: all 0.25s ease;
-        border: 1px solid rgba(226, 232, 240, 0.3);
-    }
-
-    .recommend-item:hover {
-        background: rgba(255, 255, 255, 0.9);
-        transform: translateX(4px);
-        border-color: #5e72e4;
-    }
-
-    .recommend-icon {
-        font-size: 1rem;
-        color: #5e72e4;
-    }
-
-    .recommend-title-text {
-        flex: 1;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #2d3748;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .recommend-date {
-        font-size: 0.7rem;
-        color: #a0aec0;
-    }
-
-    @media (max-width: 1024px) {
+    /* ========== PC端：≥1025px 三栏 ========== */
+    @media (min-width: 1025px) {
         .three-columns {
-            grid-template-columns: 260px 1fr;
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            gap: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
         }
+
         .right-sidebar {
-            display: block;
-            position: static;
+            position: sticky;
+            top: 20px;
+            align-self: start;
+        }
+
+        .glass-container {
+            min-width: 0;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            border-color: rgba(94, 114, 228, 0.3);
+        }
+
+        .glass-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #2d3748 0%, #5e72e4 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .post-categories {
+            margin-bottom: 24px;
+        }
+
+        .post-category {
+            background: rgba(94, 114, 228, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #5e72e4;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .post-category:hover {
+            background: #5e72e4;
+            color: white;
+        }
+
+        .post-content {
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .post-content p {
+            margin-bottom: 1.2em;
+        }
+
+        .post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            font-weight: 600;
+        }
+
+        .post-content h1 { font-size: 1.8rem; }
+        .post-content h2 { font-size: 1.5rem; }
+        .post-content h3 { font-size: 1.3rem; }
+        .post-content ul, .post-content ol {
+            margin: 1em 0;
+            padding-left: 2em;
+        }
+        .post-content li {
+            margin: 0.5em 0;
+        }
+        .post-content blockquote {
+            border-left: 4px solid #5e72e4;
+            padding-left: 1em;
+            margin: 1em 0;
+            color: #718096;
+            font-style: italic;
+        }
+        .post-content pre {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 1em;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1em 0;
+        }
+        .post-content code {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1em 0;
+        }
+
+        .post-footer {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .back-home {
+            color: #5e72e4;
+            text-decoration: none;
+        }
+
+        .post-tags {
+            margin-top: 16px;
+        }
+
+        .post-tag {
+            color: #5e72e4;
+            text-decoration: none;
+            margin-left: 8px;
+        }
+
+        .recommend-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .recommend-card:hover {
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+            border-color: rgba(94, 114, 228, 0.25);
+        }
+
+        .recommend-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #5e72e4;
+            display: inline-block;
+            color: #2d3748;
+        }
+
+        .recommend-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .recommend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(226, 232, 240, 0.3);
+        }
+
+        .recommend-item:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateX(4px);
+            border-color: #5e72e4;
+        }
+
+        .recommend-icon {
+            font-size: 1rem;
+            color: #5e72e4;
+        }
+
+        .recommend-title-text {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2d3748;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .recommend-date {
+            font-size: 0.7rem;
+            color: #a0aec0;
         }
     }
 
-    @media (max-width: 768px) {
-        .three-columns {
-            grid-template-columns: 1fr;
-            padding: 20px 16px;
+    /* ========== 平板：641px - 1024px 两栏 ========== */
+    @media (min-width: 641px) and (max-width: 1024px) {
+        html {
+            font-size: 15px;
         }
+
+        .three-columns {
+            display: grid;
+            grid-template-columns: 35% 65%;
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
         .left-sidebar {
             position: static;
         }
-        .glass-card {
-            padding: 20px;
-        }
-        .glass-title {
-            font-size: 1.5rem;
-        }
-        .recommend-card {
+
+        .right-sidebar {
             position: static;
         }
-    }
 
-    @keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
+        .glass-container {
+            min-width: 0;
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 24px;
+        }
+
+        .glass-title {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+        }
+
+        .post-meta {
+            font-size: 0.8rem;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .post-category {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+        }
+
+        .post-content {
+            font-size: 0.95rem;
+        }
+
+        .recommend-card {
+            padding: 18px;
+        }
+
+        .recommend-title {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+        }
+
+        .recommend-list {
+            gap: 10px;
+        }
+
+        .recommend-item {
+            padding: 8px 10px;
+            gap: 10px;
+        }
+
+        .recommend-title-text {
+            font-size: 0.85rem;
         }
     }
 
-    .glass-card {
-        animation: fadeUp 0.4s ease-out;
-    }
+    /* ========== 手机：≤640px 两栏 3:7 ========== */
+    @media (max-width: 640px) {
+        html {
+            font-size: 14px;
+        }
 
-    .recommend-card {
-        animation: fadeUp 0.5s ease-out 0.1s both;
+        .three-columns {
+            display: grid;
+            grid-template-columns: 30% 70%;
+            gap: 14px;
+            padding: 14px;
+        }
+
+        .left-sidebar {
+            position: static;
+        }
+
+        .right-sidebar {
+            position: static;
+        }
+
+        /* ========== 左栏优化 ========== */
+        .widget {
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 6px;
+        }
+
+        .name {
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+
+        .bio {
+            font-size: 0.6rem;
+            margin-bottom: 6px;
+        }
+
+        .social-link {
+            padding: 2px 6px;
+            font-size: 0.55rem;
+        }
+
+        .widget-title {
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+        }
+
+        .search-input {
+            padding: 6px 8px;
+            font-size: 0.65rem;
+        }
+
+        /* 标签云 - 2列紧凑 */
+        .tags-cloud {
+            display: block;
+            column-count: 2;
+            column-gap: 6px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding-right: 3px;
+        }
+
+        .tag {
+            margin-bottom: 5px;
+            font-size: 0.6rem;
+            padding: 3px 6px;
+        }
+
+        .tag-count {
+            font-size: 0.55rem;
+        }
+
+        /* ========== 右栏文章内容优化 ========== */
+        .glass-card {
+            padding: 14px;
+            border-radius: 16px;
+        }
+
+        .glass-title {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+
+        .post-meta {
+            font-size: 0.7rem;
+            gap: 10px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+        }
+
+        .post-category {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            margin-right: 6px;
+        }
+
+        /* 文章内容 - 优化疏密 */
+        .post-content {
+            font-size: 0.88rem;
+            line-height: 1.65;
+        }
+
+        .post-content p {
+            margin-bottom: 0.9em;
+        }
+
+        .post-content h2 {
+            font-size: 1.2rem;
+            margin-top: 1.2em;
+            margin-bottom: 0.6em;
+        }
+
+        .post-content h3 {
+            font-size: 1.05rem;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+        }
+
+        .post-content ul, 
+        .post-content ol {
+            padding-left: 1.5em;
+            margin: 0.8em 0;
+        }
+
+        .post-content li {
+            margin: 0.3em 0;
+        }
+
+        .post-content blockquote {
+            padding-left: 0.8em;
+            margin: 0.8em 0;
+            font-size: 0.85rem;
+        }
+
+        .post-content pre {
+            padding: 0.8em;
+            margin: 0.8em 0;
+            font-size: 0.75rem;
+        }
+
+        .post-content code {
+            font-size: 0.8rem;
+        }
+
+        .post-footer {
+            margin-top: 24px;
+            padding-top: 14px;
+        }
+
+        .back-home {
+            font-size: 0.8rem;
+        }
+
+        .post-tags {
+            margin-top: 10px;
+        }
+
+        .post-tag {
+            font-size: 0.7rem;
+            margin-left: 6px;
+        }
+
+        /* ========== 推荐卡片优化 ========== */
+        .recommend-card {
+            padding: 12px;
+            border-radius: 14px;
+        }
+
+        .recommend-title {
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+        }
+
+        .recommend-list {
+            gap: 6px;
+        }
+
+        .recommend-item {
+            padding: 6px 8px;
+            gap: 6px;
+        }
+
+        .recommend-icon {
+            font-size: 0.7rem;
+        }
+
+        .recommend-title-text {
+            font-size: 0.7rem;
+        }
+
+        .recommend-date {
+            font-size: 0.6rem;
+        }
     }
 </style>
 

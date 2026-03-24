@@ -9,7 +9,6 @@
 
     <!-- 中栏 -->
     <div class="glass-container">
-        <!-- 主内容卡片 -->
         <div class="glass-card">
             <h1 class="glass-title">{{ .Title }}</h1>
             
@@ -88,349 +87,528 @@
 </div>
 
 <style>
-    .three-columns {
-        display: grid;
-        grid-template-columns: 280px 1fr 280px;
-        gap: 32px;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 32px 24px;
+    /* ========== 全局设置 ========== */
+    html {
+        font-size: 16px;
     }
 
-    /* 毛玻璃容器 */
-    .glass-container {
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-    }
-
-    /* 主毛玻璃卡片 */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(12px);
-        border-radius: 28px;
-        padding: 32px;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-    }
-
-    .glass-card:hover {
-        background: rgba(255, 255, 255, 0.92);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-        border-color: rgba(94, 114, 228, 0.3);
-    }
-
-    /* 推荐卡片样式 */
-    .recommend-card {
-        background: rgba(255, 255, 255, 0.75);
-        backdrop-filter: blur(8px);
-        border-radius: 24px;
-        padding: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-        transition: all 0.3s ease;
-        position: sticky;
-        top: 20px;
-    }
-
-    .recommend-card:hover {
-        background: rgba(255, 255, 255, 0.85);
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
-        border-color: rgba(94, 114, 228, 0.25);
-    }
-
-    .recommend-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        margin-bottom: 20px;
-        padding-bottom: 12px;
-        border-bottom: 2px solid #5e72e4;
-        display: inline-block;
-        color: #2d3748;
-    }
-
-    .recommend-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .recommend-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 12px;
-        background: rgba(255, 255, 255, 0.5);
-        border-radius: 12px;
-        text-decoration: none;
-        transition: all 0.25s ease;
-        border: 1px solid rgba(226, 232, 240, 0.3);
-    }
-
-    .recommend-item:hover {
-        background: rgba(255, 255, 255, 0.9);
-        transform: translateX(4px);
-        border-color: #5e72e4;
-    }
-
-    .recommend-icon {
-        font-size: 1rem;
-        color: #5e72e4;
-    }
-
-    .recommend-title-text {
-        flex: 1;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #2d3748;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .recommend-date {
-        font-size: 0.7rem;
-        color: #a0aec0;
-    }
-
-    .recommend-empty {
-        text-align: center;
-        padding: 20px;
-        color: #a0aec0;
-        font-size: 0.85rem;
-    }
-
-    /* 标题样式 */
-    .glass-title {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 32px;
-        padding-bottom: 16px;
-        border-bottom: 2px solid #5e72e4;
-        display: inline-block;
-        background: linear-gradient(135deg, #2d3748 0%, #5e72e4 100%);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    /* 列表容器 */
-    .glass-list {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    /* 卡片链接 */
-    .glass-item-link {
-        text-decoration: none;
-        display: block;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    /* 列表项卡片 */
-    .glass-item {
-        background: rgba(255, 255, 255, 0.65);
-        backdrop-filter: blur(4px);
-        border-radius: 20px;
-        padding: 24px;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-        cursor: pointer;
-    }
-
-    .glass-item-link:hover .glass-item {
-        background: rgba(255, 255, 255, 0.9);
-        transform: translateX(6px) translateY(-2px);
-        border-color: #5e72e4;
-        box-shadow: 0 12px 28px rgba(94, 114, 228, 0.15);
-    }
-
-    .glass-item-link:active .glass-item {
-        transform: translateX(3px) translateY(-1px);
-        transition: transform 0.05s;
-    }
-
-    /* 文章标题 */
-    .glass-item-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: #2d3748;
-        margin: 0 0 12px 0;
-        transition: color 0.2s ease;
-    }
-
-    .glass-item-link:hover .glass-item-title {
-        color: #5e72e4;
-    }
-
-    /* 元数据 */
-    .glass-item-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin: 12px 0;
-        font-size: 0.75rem;
-        color: #718096;
-    }
-
-    .glass-item-meta span {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    /* 摘要 */
-    .glass-item-summary {
-        color: #718096;
-        line-height: 1.6;
-        margin: 12px 0;
-        font-size: 0.88rem;
-    }
-
-    /* 阅读更多 */
-    .glass-read-more {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: #5e72e4;
-        font-size: 0.8rem;
-        font-weight: 500;
-        margin-top: 8px;
-        transition: gap 0.2s ease;
-    }
-
-    .glass-item-link:hover .glass-read-more {
-        gap: 10px;
-    }
-
-    /* 分页 */
-    .glass-pagination {
-        margin-top: 32px;
-        padding-top: 24px;
-        border-top: 1px solid rgba(226, 232, 240, 0.5);
-        text-align: center;
-    }
-
-    .pagination-nav {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-    }
-
-    .page-btn {
-        display: inline-block;
-        padding: 8px 20px;
-        background: rgba(255, 255, 255, 0.7);
-        border-radius: 40px;
-        text-decoration: none;
-        color: #5e72e4;
-        font-size: 0.85rem;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        border: 1px solid rgba(94, 114, 228, 0.3);
-    }
-
-    .page-btn:hover {
-        background: #5e72e4;
-        color: white;
-        transform: translateY(-2px);
-        border-color: #5e72e4;
-    }
-
-    .page-info {
-        color: #718096;
-        font-size: 0.85rem;
-    }
-
-    /* 右栏 */
-    .right-sidebar {
-        position: sticky;
-        top: 20px;
-        align-self: start;
-    }
-
-    /* 响应式 */
-    @media (max-width: 1024px) {
+    /* ========== PC端：≥1025px 三栏 ========== */
+    @media (min-width: 1025px) {
         .three-columns {
-            grid-template-columns: 260px 1fr;
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            gap: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
         }
+
         .right-sidebar {
+            position: sticky;
+            top: 20px;
+            align-self: start;
+        }
+
+        .glass-container {
+            min-width: 0;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            border-color: rgba(94, 114, 228, 0.3);
+        }
+
+        .glass-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #5e72e4;
+            display: inline-block;
+            background: linear-gradient(135deg, #2d3748 0%, #5e72e4 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .glass-item-link {
+            text-decoration: none;
             display: block;
-            position: static;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .glass-item {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            cursor: pointer;
+        }
+
+        .glass-item-link:hover .glass-item {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateX(6px) translateY(-2px);
+            border-color: #5e72e4;
+            box-shadow: 0 12px 28px rgba(94, 114, 228, 0.15);
+        }
+
+        .glass-item-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0 0 12px 0;
+            transition: color 0.2s ease;
+        }
+
+        .glass-item-link:hover .glass-item-title {
+            color: #5e72e4;
+        }
+
+        .glass-item-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 12px 0;
+            font-size: 0.75rem;
+            color: #718096;
+        }
+
+        .glass-item-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .glass-item-summary {
+            color: #718096;
+            line-height: 1.6;
+            margin: 12px 0;
+            font-size: 0.88rem;
+        }
+
+        .glass-read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #5e72e4;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 8px;
+            transition: gap 0.2s ease;
+        }
+
+        .glass-item-link:hover .glass-read-more {
+            gap: 10px;
+        }
+
+        .glass-pagination {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(226, 232, 240, 0.5);
+            text-align: center;
+        }
+
+        .pagination-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 40px;
+            text-decoration: none;
+            color: #5e72e4;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(94, 114, 228, 0.3);
+        }
+
+        .page-btn:hover {
+            background: #5e72e4;
+            color: white;
+            transform: translateY(-2px);
+            border-color: #5e72e4;
+        }
+
+        .page-info {
+            color: #718096;
+            font-size: 0.85rem;
+        }
+
+        .glass-empty {
+            text-align: center;
+            padding: 60px 40px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .recommend-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .recommend-card:hover {
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+            border-color: rgba(94, 114, 228, 0.25);
+        }
+
+        .recommend-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #5e72e4;
+            display: inline-block;
+            color: #2d3748;
+        }
+
+        .recommend-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .recommend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(226, 232, 240, 0.3);
+        }
+
+        .recommend-item:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateX(4px);
+            border-color: #5e72e4;
+        }
+
+        .recommend-icon {
+            font-size: 1rem;
+            color: #5e72e4;
+        }
+
+        .recommend-title-text {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2d3748;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .recommend-date {
+            font-size: 0.7rem;
+            color: #a0aec0;
         }
     }
 
-    @media (max-width: 768px) {
-        .three-columns {
-            grid-template-columns: 1fr;
-            padding: 20px 16px;
+    /* ========== 平板：641px - 1024px 两栏 ========== */
+    @media (min-width: 641px) and (max-width: 1024px) {
+        html {
+            font-size: 15px;
         }
+
+        .three-columns {
+            display: grid;
+            grid-template-columns: 35% 65%;
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
         .left-sidebar {
             position: static;
         }
-        .glass-card {
-            padding: 20px;
-        }
-        .glass-title {
-            font-size: 1.5rem;
-        }
-        .glass-item {
-            padding: 18px;
-        }
-        .glass-item-title {
-            font-size: 1rem;
-        }
-        .glass-item-meta {
-            gap: 12px;
-            font-size: 0.65rem;
-        }
-        .recommend-card {
+
+        .right-sidebar {
             position: static;
         }
-    }
 
-    /* 动画 */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
+        .glass-container {
+            min-width: 0;
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 24px;
+        }
+
+        .glass-title {
+            font-size: 1.6rem;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+        }
+
+        .glass-list {
+            gap: 16px;
+        }
+
+        .glass-item {
+            padding: 20px;
+        }
+
+        .glass-item-title {
+            font-size: 1.1rem;
+        }
+
+        .glass-item-meta {
+            gap: 16px;
+            font-size: 0.7rem;
+        }
+
+        .glass-item-summary {
+            font-size: 0.85rem;
+        }
+
+        .glass-pagination {
+            margin-top: 24px;
+            padding-top: 20px;
+        }
+
+        .page-btn {
+            padding: 6px 16px;
+            font-size: 0.8rem;
+        }
+
+        .recommend-card {
+            padding: 18px;
+        }
+
+        .recommend-title {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+        }
+
+        .recommend-list {
+            gap: 10px;
+        }
+
+        .recommend-item {
+            padding: 8px 10px;
+            gap: 10px;
+        }
+
+        .recommend-title-text {
+            font-size: 0.85rem;
         }
     }
 
-    .glass-item-link {
-        animation: fadeInUp 0.4s ease-out;
-        animation-fill-mode: both;
-    }
+    /* ========== 手机：≤640px 两栏 3:7 ========== */
+    @media (max-width: 640px) {
+        html {
+            font-size: 14px;
+        }
 
-    .glass-item-link:nth-child(1) { animation-delay: 0.03s; }
-    .glass-item-link:nth-child(2) { animation-delay: 0.06s; }
-    .glass-item-link:nth-child(3) { animation-delay: 0.09s; }
-    .glass-item-link:nth-child(4) { animation-delay: 0.12s; }
-    .glass-item-link:nth-child(5) { animation-delay: 0.15s; }
-    .glass-item-link:nth-child(6) { animation-delay: 0.18s; }
-    .glass-item-link:nth-child(7) { animation-delay: 0.21s; }
-    .glass-item-link:nth-child(8) { animation-delay: 0.24s; }
-    .glass-item-link:nth-child(9) { animation-delay: 0.27s; }
-    .glass-item-link:nth-child(10) { animation-delay: 0.3s; }
+        .three-columns {
+            display: grid;
+            grid-template-columns: 30% 70%;
+            gap: 14px;
+            padding: 14px;
+        }
 
-    .recommend-card {
-        animation: fadeInUp 0.5s ease-out 0.1s both;
+        .left-sidebar {
+            position: static;
+        }
+
+        .right-sidebar {
+            position: static;
+        }
+
+        /* ========== 左栏优化 ========== */
+        .widget {
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 6px;
+        }
+
+        .name {
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+
+        .bio {
+            font-size: 0.6rem;
+            margin-bottom: 6px;
+        }
+
+        .social-link {
+            padding: 2px 6px;
+            font-size: 0.55rem;
+        }
+
+        .widget-title {
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+        }
+
+        .search-input {
+            padding: 6px 8px;
+            font-size: 0.65rem;
+        }
+
+        /* 标签云 - 2列紧凑 */
+        .tags-cloud {
+            display: block;
+            column-count: 2;
+            column-gap: 6px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding-right: 3px;
+        }
+
+        .tag {
+            margin-bottom: 5px;
+            font-size: 0.6rem;
+            padding: 3px 6px;
+        }
+
+        .tag-count {
+            font-size: 0.55rem;
+        }
+
+        /* ========== 右栏文章列表优化 ========== */
+        .glass-card {
+            padding: 14px;
+            border-radius: 16px;
+        }
+
+        .glass-title {
+            font-size: 1.2rem;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+        }
+
+        .glass-list {
+            gap: 14px;
+        }
+
+        .glass-item {
+            padding: 12px;
+        }
+
+        .glass-item-title {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .glass-item-meta {
+            gap: 10px;
+            font-size: 0.6rem;
+            margin: 6px 0;
+        }
+
+        .glass-item-summary {
+            font-size: 0.75rem;
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .glass-read-more {
+            font-size: 0.7rem;
+            margin-top: 4px;
+        }
+
+        .glass-pagination {
+            margin-top: 16px;
+            padding-top: 12px;
+        }
+
+        .page-btn {
+            padding: 5px 12px;
+            font-size: 0.65rem;
+        }
+
+        .page-info {
+            font-size: 0.65rem;
+        }
+
+        /* ========== 推荐卡片优化 ========== */
+        .recommend-card {
+            padding: 12px;
+            border-radius: 14px;
+        }
+
+        .recommend-title {
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+        }
+
+        .recommend-list {
+            gap: 6px;
+        }
+
+        .recommend-item {
+            padding: 6px 8px;
+            gap: 6px;
+        }
+
+        .recommend-icon {
+            font-size: 0.7rem;
+        }
+
+        .recommend-title-text {
+            font-size: 0.7rem;
+        }
+
+        .recommend-date {
+            font-size: 0.6rem;
+        }
     }
 </style>
 
 <script>
-    // 阻止社交链接和标签链接冒泡
     document.addEventListener('DOMContentLoaded', function() {
         const socialLinks = document.querySelectorAll('.social-link');
         socialLinks.forEach(link => {
